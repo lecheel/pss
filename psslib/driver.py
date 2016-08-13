@@ -202,6 +202,7 @@ def pss_run(roots,
         do_heading=True,
         prefix_filename_to_file_matches=True,
         show_column_of_first_match=False,
+        show_style=False,
         ncontext_before=0,
         ncontext_after=0,
         ):
@@ -224,7 +225,8 @@ def pss_run(roots,
             lineno_color_str=lineno_color_str,
             do_heading=do_heading,
             prefix_filename_to_file_matches=prefix_filename_to_file_matches,
-            show_column_of_first_match=show_column_of_first_match)
+            show_column_of_first_match=show_column_of_first_match,
+            show_style=show_style)
 
     # Set up the FileFinder
     #

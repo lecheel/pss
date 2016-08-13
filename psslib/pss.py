@@ -142,6 +142,7 @@ def main(argv=sys.argv, output_formatter=None):
                 do_heading=options.do_heading,
                 prefix_filename_to_file_matches=options.prefix_filename,
                 show_column_of_first_match=options.show_column,
+                show_style=options.show_fte,
                 ncontext_before=ncontext_before,
                 ncontext_after=ncontext_after)
     except KeyboardInterrupt:
@@ -192,7 +193,7 @@ Additionally, files matching these (regexp) patterns are ignored:
 
       %s
 
-pss version %s
+pss version %sa
 ''' % ( _ignored_dirs_as_string(),
         '\n      '.join(IGNORED_FILE_PATTERNS),
         __version__,)
@@ -208,7 +209,7 @@ def parse_cmdline(cmdline_args):
         description=DESCRIPTION,
         prog='pss',
         add_help_option=False,  # -h is a real option
-        version='pss %s' % __version__)
+        version='pss %sa' % __version__)
 
     optparser.add_option('--help-types',
         action='store_true', dest='help_types',
@@ -270,6 +271,9 @@ def parse_cmdline(cmdline_args):
     group_output.add_option('-C', '--context',
         action='store', dest='context', metavar='NUM', type='int',
         help='Print NUM lines of context before and after each match')
+    group_output.add_option('--fte',
+        action='store_true', dest='show_fte',
+        help='Print fte style')
     group_output.add_option('--color',
         action='store_true', dest='do_colors', default=sys.stdout.isatty(),
         help='Highlight the matching text')

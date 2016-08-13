@@ -7,6 +7,7 @@
 # This code is in the public domain
 #-------------------------------------------------------------------------------
 import sys
+import os
 
 from .outputformatter import OutputFormatter
 from .py3compat import tostring
@@ -27,10 +28,12 @@ class DefaultPssOutputFormatter(OutputFormatter):
             do_colors=True,
             match_color_str=None,
             filename_color_str=None,
+            fte_color_str=None,
             lineno_color_str=None,
             do_heading=True,
             prefix_filename_to_file_matches=True,
             show_column_of_first_match=False,
+            show_style=False,
             stream=None):
         self.do_colors = do_colors
         self.prefix_filename_to_file_matches = prefix_filename_to_file_matches
@@ -38,11 +41,14 @@ class DefaultPssOutputFormatter(OutputFormatter):
         self.inline_filename = (True if prefix_filename_to_file_matches and not do_heading
                                 else False)
         self.show_column_of_first_match = show_column_of_first_match
+        self.show_style = show_style
 
         self.style_match = (decode_colorama_color(match_color_str) or
                             colorama.Fore.BLACK + colorama.Back.YELLOW)
         self.style_filename = (decode_colorama_color(filename_color_str) or
                                colorama.Fore.MAGENTA + colorama.Style.BRIGHT)
+        self.style_fte = (decode_colorama_color(fte_color_str) or 
+                          colorama.Fore.GREEN + colorama.Style.BRIGHT)      
         self.style_lineno = (decode_colorama_color(lineno_color_str) or
                              colorama.Fore.WHITE)
 
@@ -55,19 +61,25 @@ class DefaultPssOutputFormatter(OutputFormatter):
         self.stream = stream or sys.stdout
 
     def start_matches_in_file(self, filename):
-        if self.prefix_filename_to_file_matches and self.do_heading:
-            self._emit_colored(filename, self.style_filename)
+       if self.prefix_filename_to_file_matches and self.do_heading:
+            if self.show_style:
+                curdir=os.getcwd()
+                fte_style='File: ' + curdir + filename[1:] 
+                self._emit_colored(fte_style, self.style_fte)
+            else:
+                self._emit_colored(filename, self.style_filename)
             self._emitline()
 
     def end_matches_in_file(self, filename):
-        self._emitline()
+        return
+#        self._emitline()
 
     def matching_line(self, matchresult, filename):
         if self.inline_filename:
             self._emit_colored('%s' % filename, self.style_filename)
-            self._emit(':')
+            self._emit(': ')
         self._emit_colored('%s' % matchresult.matching_lineno, self.style_lineno)
-        self._emit(':')
+        self._emit(': ')
         first_match_range = matchresult.matching_column_ranges[0]
         if self.show_column_of_first_match:
             self._emit('%s:' % first_match_range[0])
