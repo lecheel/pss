@@ -61,7 +61,11 @@ class DefaultPssOutputFormatter(OutputFormatter):
         self.stream = stream or sys.stdout
 
     def start_matches_in_file(self, filename):
-       if self.prefix_filename_to_file_matches and self.do_heading:
+        # patch for redirect output
+        if self.show_style:
+            self.do_heading = True
+            self.inline_filename = False
+        if self.prefix_filename_to_file_matches and self.do_heading:
             if self.show_style:
                 curdir=os.getcwd()
                 fte_style='File: ' + curdir + filename[1:] 
